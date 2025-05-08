@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - Gestión Laboratorio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-page">
+  <header class="navbar">
+    <div class="nav-left"><span id="section-title"></span></div>
+    <div class="nav-right">
+      <button id="mobile-menu-btn" class="btn btn-icon">☰</button>
+      <div id="mobile-menu" class="mobile-menu">
+        <ul>
+          <li data-tab="incidenciasGenerales" class="mobile-item">Incidencias Gen.</li>
+          <li data-tab="incidenciasEquipos" class="mobile-item">Incidencias Eq.</li>
+          <li data-tab="laboratorios" class="mobile-item">Laboratorios</li>
+          <li data-tab="equipos" class="mobile-item">Equipos</li>
+          <li data-tab="horarios" class="mobile-item">Horarios</li>
+          <li data-tab="prestamos" class="mobile-item">Préstamos</li>
+          <li data-tab="usuarios" class="mobile-item superadmin-only">Usuarios</li>
+        </ul>
+        <button id="logoutBtn" class="btn btn-logout">Cerrar Sesión</button>
+      </div>
+    </div>
+    <nav class="nav-desktop">
+      <ul>
+        <li data-tab="incidenciasGenerales" class="nav-item">Incidencias Gen.</li>
+        <li data-tab="incidenciasEquipos" class="nav-item">Incidencias Eq.</li>
+        <li data-tab="laboratorios" class="nav-item">Laboratorios</li>
+        <li data-tab="equipos" class="nav-item">Equipos</li>
+        <li data-tab="horarios" class="nav-item">Horarios</li>
+        <li data-tab="prestamos" class="nav-item">Préstamos</li>
+        <li data-tab="usuarios" class="nav-item superadmin-only">Usuarios</li>
+      </ul>
+    </nav>
+  </header>
+  <main class="content">
+    <section id="incidenciasGenerales" class="tab-content"></section>
+    <section id="incidenciasEquipos" class="tab-content"></section>
+    <section id="laboratorios" class="tab-content"></section>
+    <section id="equipos" class="tab-content"></section>
+    <section id="horarios" class="tab-content"></section>
+    <section id="prestamos" class="tab-content"></section>
+    <section id="usuarios" class="tab-content"></section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/incidenciasGenerales.js"></script>
+  <script src="js/incidenciasEquipos.js"></script>
+  <script src="js/laboratorios.js"></script>
+  <script src="js/equipos.js"></script>
+  <script src="js/horarios.js"></script>
+  <script src="js/prestamos.js"></script>
+  <script src="js/usuarios.js"></script>
+</body>
+</html>
