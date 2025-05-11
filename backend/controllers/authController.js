@@ -18,7 +18,7 @@ async function register(req, res, next) {
     const u = new User({ username, role });
     await u.setPassword(password);
     await u.save();
-    res.status(201).json({ message: 'Usuario creado' });
+    res.status(201).json({ token, role });
   } catch (err) { next(err); }
 }
 
