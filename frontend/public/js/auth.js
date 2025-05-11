@@ -1,8 +1,10 @@
 const API = '/api';
-
-async function checkSuperAdmin() {
-  const res = await fetch(`${API}/users`, { method: 'GET', headers: authHeader() });
-  return res.status === 200; // true si hay usuarios
+// Comprueba si hay usuarios en la BD (nuevo endpoint público)
+async function hasAnyUser() {
+  const res = await fetch(`${API}/auth/check-first`);
+  if (!res.ok) return false;
+  const { hasUser } = await res.json();
+  return hasUser;
 }
 
 function authHeader() {
@@ -15,46 +17,86 @@ function showMessage(msg, type='success') {
   div.className = `toast ${type}`;
   div.innerText = msg;
   document.body.append(div);
-  setTimeout(()=> div.remove(),3000);
+  setTimeout(() => div.remove(), 3000);
 }
 
-// Render form
-window.addEventListener('DOMContentLoaded', async ()=>{
+window.addEventListener('DOMContentLoaded', async () => {
+  // 1) Si ya tengo token, voy directo a la app
+  if (localStorage.getItem('token')) {
+    return window.location.href = 'index.html';
+  }
+
   const container = document.getElementById('form-area');
-  const hasAdmin = await checkSuperAdmin().catch(()=>false);
-  if (!hasAdmin) {
+  const userExists = await hasAnyUser().catch(() => false);
+
+  if (!userExists) {
+    // 2) Formulario de registro
     container.innerHTML = `
-      <form id="regForm">
-        <input type="text" id="username" placeholder="Usuario" class="input-field" required>
-        <input type="password" id="password" placeholder="Contraseña" class="input-field" required>
-        <button class="btn">Registrar SuperAdmin</button>
+      <form id="authForm">
+        <input name="username"   placeholder="Usuario"    class="input-field" required>
+        <input name="password"   type="password" placeholder="Contraseña" class="input-field" required>
+        <button type="submit" class="btn">Registrar SuperAdmin</button>
       </form>`;
-    document.getElementById('regForm').addEventListener('submit', async e=>{
-      e.preventDefault();
-      const u=document.getElementById('username').value;
-      const p=document.getElementById('password').value;
-      const res=await fetch(`${API}/auth/register`,{
-        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p,role:'superAdmin'})
-      });
-      if(res.ok) { showMessage('Registrado!'); window.location.reload(); }
-    });
+    document.getElementById('authForm').onsubmit = handleRegister;
   } else {
+    // 3) Formulario de login
     container.innerHTML = `
-      <form id="loginForm">
-        <input type="text" id="username" placeholder="Usuario" class="input-field" required>
-        <input type="password" id="password" placeholder="Contraseña" class="input-field" required>
-        <button class="btn">Iniciar Sesión</button>
+      <form id="authForm">
+        <input name="username"   placeholder="Usuario"    class="input-field" required>
+        <input name="password"   type="password" placeholder="Contraseña" class="input-field" required>
+        <button type="submit" class="btn">Iniciar Sesión</button>
       </form>`;
-    document.getElementById('loginForm').addEventListener('submit', async e=>{
-      e.preventDefault();
-      const u=document.getElementById('username').value;
-      const p=document.getElementById('password').value;
-      const res=await fetch(`${API}/auth/login`,{
-        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})
-      });
-      const data=await res.json();
-      if(data.token) { localStorage.setItem('token',data.token); localStorage.setItem('role',data.role); window.location.href='dashboard.html'; }
-      else showMessage(data.message,'error');
-    });
+    document.getElementById('authForm').onsubmit = handleLogin;
   }
 });
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const form = e.target;
+  const body = {
+    username: form.username.value,
+    password: form.password.value,
+    role: 'superAdmin'
+  };
+  const res = await fetch(`${API}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (res.ok) {
+    // Extraemos token y rol
+    const { token, role } = await res.json();
+    localStorage.setItem('token', token);
+    localStorage.setItem('role', role);
+    showMessage('SuperAdmin registrado');
+    window.location.href = 'index.html';
+  } else {
+    const err = await res.json();
+    showMessage(err.message || 'Error al registrar', 'error');
+  }
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const form = e.target;
+  const body = {
+    username: form.username.value,
+    password: form.password.value
+  };
+  const res = await fetch(`${API}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  const data = await res.json();
+  if (data.token) {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('role', data.role);
+    showMessage('Inicio de sesión exitoso');
+    window.location.href = 'index.html';
+  } else {
+    showMessage(data.message || 'Credenciales inválidas', 'error');
+  }
+}
