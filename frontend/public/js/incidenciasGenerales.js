@@ -1,8 +1,10 @@
 // Carga y gestión de incidencias generales
 async function incidentesGen() {
+  try {
   const res = await fetch('/api/incidenciasGenerales', {
     headers: authHeader()
   });
+  if (!res.ok) throw new Error('Error cargando incidencias');
   const data = await res.json();
   const c = document.getElementById('incidenciasGenerales');
   c.innerHTML = '<h2>Incidencias Generales</h2><button onclick="showIncGenModal()" class="btn">Nueva</button>' +
@@ -21,6 +23,9 @@ async function incidentesGen() {
         </td>
       </tr>`).join('') +
     '</table>';
+  } catch (error) {
+    showMessage('No se pudieron cargar los laboratorios. Inténtalo más tarde.', 'error');
+  }
 }
 
 // Modal de creación/edición para Incidencias Generales
