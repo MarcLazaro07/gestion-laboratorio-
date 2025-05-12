@@ -58,6 +58,29 @@ body { font-family: var(--font); background: var(--light-bg); color: var(--text)
   margin-left: 1rem;
 }
 
+.toast {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: fadeInOut 3s;
+}
+
+.toast.error {
+  background: #d9534f;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  10%, 90% { opacity: 1; }
+}
+
 /* Responsive */
 @media(max-width:768px) {
   .nav-desktop { display:none; }
