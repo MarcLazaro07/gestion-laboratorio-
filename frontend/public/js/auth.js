@@ -5,7 +5,10 @@ async function hasAnyUser() {
   if (!res.ok) return false;
   const { hasUser } = await res.json();
   return hasUser;
-}
+} catch (error) {
+    showMessage('Error al conectar con el servidor. Inténtalo más tarde.', 'error');
+    return false;
+  }
 
 function authHeader() {
   const token = localStorage.getItem('token');
@@ -23,7 +26,13 @@ function showMessage(msg, type='success') {
 window.addEventListener('DOMContentLoaded', async () => {
   // 1) Si ya tengo token, voy directo a la app
   if (localStorage.getItem('token')) {
-    return window.location.href = 'index.html';
+    // Verificar si el token es válido antes de redirigir
+    const res = await fetch(`${API}/auth/validate-token`, { headers: authHeader() });
+    if (res.ok) {
+      return window.location.href = 'index.html';
+    } else {
+      localStorage.clear(); // Limpiar token inválido
+    }
   }
 
   const container = document.getElementById('form-area');
