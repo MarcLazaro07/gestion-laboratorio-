@@ -23,5 +23,8 @@ const checkFirstUser = async (req, res, next) => {
 const router = Router();
 router.post('/login', login);
 router.post('/register', checkFirstUser, register);
+router.get('/validate-token', authenticate, (req, res) => {
+  res.json({ valid: true });
+});
 
 module.exports = router;
