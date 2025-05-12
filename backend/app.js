@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
@@ -20,8 +21,6 @@ app.use('/api/horarios', require('./routes/horarios'));
 app.use('/api/incidenciasGenerales', require('./routes/incidenciasGenerales'));
 app.use('/api/incidenciasEquipos', require('./routes/incidenciasEquipos'));
 app.use('/api/prestamos', require('./routes/prestamos'));
-
-const path = require('path');
 
 // Servir frontend desde backend
 app.use(express.static(path.join(__dirname, '../frontend/public')));
